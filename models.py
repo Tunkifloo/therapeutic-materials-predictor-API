@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Literal
 
 
@@ -18,10 +18,11 @@ class PrediccionRequest(BaseModel):
     demanda_total: float = Field(..., ge=0, description="Demanda total actual")
     es_inicio_ciclo: int = Field(..., ge=0, le=1, description="1 si es inicio de ciclo, 0 sino")
 
-    @validator('tipo_terapia', 'categoria_material')
-    def validar_segmento(cls, v, values, field):
-        if field.name == 'categoria_material' and 'tipo_terapia' in values:
-            tipo = values['tipo_terapia']
+    @field_validator('categoria_material')
+    @classmethod
+    def validar_segmento(cls, v, info):
+        if 'tipo_terapia' in info.data:
+            tipo = info.data['tipo_terapia']
             material = v
 
             segmentos_validos = [
