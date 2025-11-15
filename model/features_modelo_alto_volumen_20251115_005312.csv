@@ -1,0 +1,9 @@
+feature,tipo
+anio_centrado,numerica
+es_temporada_alta,numerica
+es_temporada_baja,numerica
+demanda_lag_1m,numerica
+materiales_por_sesion,numerica
+es_inicio_ciclo,numerica
+tipo_Psicologica,dummy_tipo
+material_MaterialSensorial,dummy_material

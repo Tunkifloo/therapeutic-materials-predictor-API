@@ -1,0 +1,70 @@
+{
+  "modelo_tipo": "Lasso",
+  "parametros": {
+    "alpha": 5.0
+  },
+  "fecha_entrenamiento": "20251115_005312",
+  "metricas_train": {
+    "MAE": 145.15431728081316,
+    "R2": 0.8989004798285454
+  },
+  "metricas_test": {
+    "MAE": 168.7982504249451,
+    "R2": 0.8297075155797605
+  },
+  "features": [
+    "anio_centrado",
+    "es_temporada_alta",
+    "es_temporada_baja",
+    "demanda_lag_1m",
+    "materiales_por_sesion",
+    "es_inicio_ciclo",
+    "tipo_Psicologica",
+    "material_MaterialSensorial"
+  ],
+  "num_features": 8,
+  "features_activas": 6,
+  "intercepto": 1067.1299319783288,
+  "coeficientes": [
+    {
+      "Feature": "tipo_Psicologica",
+      "Coeficiente": -385.5137471106957
+    },
+    {
+      "Feature": "material_MaterialSensorial",
+      "Coeficiente": -255.38612006623492
+    },
+    {
+      "Feature": "es_temporada_baja",
+      "Coeficiente": -167.77362522467268
+    },
+    {
+      "Feature": "es_temporada_alta",
+      "Coeficiente": -161.32643843256756
+    },
+    {
+      "Feature": "anio_centrado",
+      "Coeficiente": 62.91647442514309
+    },
+    {
+      "Feature": "demanda_lag_1m",
+      "Coeficiente": 0.6550132365097877
+    }
+  ],
+  "segmentos": [
+    [
+      "Lenguaje",
+      "MaterialSensorial"
+    ],
+    [
+      "Psicologica",
+      "MaterialLectura"
+    ],
+    [
+      "Psicologica",
+      "MaterialSensorial"
+    ]
+  ],
+  "registros_entrenamiento": 55,
+  "registros_test": 14
+}
