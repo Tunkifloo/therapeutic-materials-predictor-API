@@ -21,8 +21,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODELO_PATH = "modelo/modelo_alto_volumen_Lasso_alpha5_0_20251115_005312.pkl"
-METADATA_PATH = "modelo/metadata_modelo_alto_volumen_20251115_005312.json"
+MODELO_PATH = "model/modelo_alto_volumen_Lasso_alpha5_0_20251115_005312.pkl"
+METADATA_PATH = "model/metadata_modelo_alto_volumen_20251115_005312.json"
 
 predictor = None
 
