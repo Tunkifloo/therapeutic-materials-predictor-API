@@ -57,6 +57,7 @@ API REST desarrollada con FastAPI para predecir la demanda mensual de materiales
 - Python 3.9+
 - pip 21.0+
 - virtualenv (recomendado)
+- **Docker y Docker Compose (recomendado para método de ejecución)**
 
 ### Hardware Mínimo
 
@@ -66,28 +67,38 @@ API REST desarrollada con FastAPI para predecir la demanda mensual de materiales
 
 ## 🚀 Instalación
 
-### 1. Clonar el repositorio
-```bash
-git clone <repository-url>
-cd api-prediccion-demanda
-```
+### 1. Método Local (Entorno Virtual)
 
-### 2. Crear entorno virtual
-```bash
-python3.9 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
-```
+1.  **Clonar el repositorio**
+    ```bash
+    git clone <repository-url>
+    cd api-prediccion-demanda
+    ```
 
-### 3. Instalar dependencias
-```bash
-pip install -r requirements.txt
-```
+2.  **Crear entorno virtual**
+    ```bash
+    python3.9 -m venv venv
+    source venv/bin/activate  # Linux/Mac
+    # venv\Scripts\activate   # Windows
+    ```
 
-### 4. Estructura de directorios
-```bash
-mkdir -p modelo
-# Copiar archivos del modelo a la carpeta modelo/
+3.  **Instalar dependencias**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+### 2. Método con Docker (Recomendado)
+
+1.  **Clonar el repositorio**
+    ```bash
+    git clone <repository-url>
+    cd api-prediccion-demanda
+    ```
+
+2.  **Asegurar los archivos del modelo**
+    Verifica que la carpeta `modelo/` exista con los archivos `.pkl`, `.json` y `.csv`.
+
+*(No se requiere instalación de Python o `pip install` en tu máquina local, Docker se encarga de todo).*
 ```
 
 Estructura final:
@@ -138,17 +149,43 @@ app.add_middleware(
 
 ## 🎯 Uso
 
-### Iniciar el servidor
+### 1. Ejecución con Docker Compose (Recomendado)
 
-#### Modo Desarrollo
+Este método levanta la API en un contenedor de producción simulado, usando los archivos `Dockerfile` y `docker-compose.yml`.
+
+1.  **Asegúrate de tener Docker y Docker Compose instalados.**
+
+2.  **Construye la imagen y levanta el contenedor:**
+    Desde la raíz del proyecto (donde está tu `docker-compose.yml`), ejecuta:
+    ```bash
+    docker-compose up --build
+    ```
+    * `--build`: Fuerza a Docker a reconstruir la imagen si hubo cambios (como un `requirements.txt` actualizado).
+
+3.  **Para ejecutar en segundo plano (detached mode):**
+    ```bash
+    docker-compose up --build -d
+    ```
+
+4.  **Verificar que esté funcionando:**
+    La API estará disponible en [http://localhost:8000/docs](http://localhost:8000/docs) y el *health check* en [http://localhost:8000/health](http://localhost:8000/health).
+
+5.  **Ver los logs (si ejecutaste en modo detached):**
+    ```bash
+    docker-compose logs -f
+    ```
+
+6.  **Detener el servicio:**
+    Presiona `CTRL+C` si estás en modo *attached*. Si estás en modo *detached*, usa:
+    ```bash
+    docker-compose down
+    ```
+
+### 2. Ejecución Local (Sin Docker)
+
+#### Modo Desarrollo (con auto-recarga)
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-#### Modo Producción
-```bash
-uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
-```
 
 ### Acceder a la documentación
 
@@ -501,17 +538,26 @@ flake8 .
 
 ### Docker
 ```dockerfile
+# Usa una imagen base de Python 3.9 ligera
 FROM python:3.9-slim
 
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
+# Copia primero el archivo de dependencias
+# Esto aprovecha el cache de Docker: si no cambias requirements.txt, no se reinstala todo
 COPY requirements.txt .
+
+# Instala las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copia el resto del código de tu aplicación (main.py, models.py, predictor.py, y la carpeta model/)
 COPY . .
 
+# Expone el puerto 8000, que es el que usa uvicorn
 EXPOSE 8000
 
+# Comando para ejecutar la aplicación en modo producción con 4 workers
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
 ```
 
@@ -529,19 +575,23 @@ docker logs -f api-demanda
 
 ### Docker Compose
 ```yaml
-version: '3.8'
-
 services:
   api:
+    # Construye la imagen usando el Dockerfile en el directorio actual (.)
     build: .
     ports:
+      # Mapea el puerto 8000 de tu máquina al puerto 8000 del contenedor
       - "8000:8000"
     volumes:
+      # Monta la carpeta 'modelo' de tu máquina en '/app/modelo' dentro del contenedor
+      # Esto asegura que tu aplicación siempre tenga acceso a los archivos .pkl y .json
       - ./modelo:/app/modelo
     environment:
+      # Configura el nivel de log (útil para la app)
       - LOG_LEVEL=INFO
     restart: unless-stopped
     healthcheck:
+      # Verifica que la API esté saludable consultando el endpoint /health
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
