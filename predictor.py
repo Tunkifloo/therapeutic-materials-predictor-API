@@ -48,24 +48,21 @@ class ModeloPredictor:
         features_df = self.construir_features(data)
 
         if isinstance(self.modelo, dict):
-            try:
-                intercepto = self.modelo['intercepto']
-                coeficientes = self.modelo['coeficientes']
-                feature_names = self.modelo['features_names']
-                prediccion_valor = intercepto
 
-                for i, nombre_feature in enumerate(feature_names):
-                    if nombre_feature in features_df.columns:
-                        valor = features_df[nombre_feature].values[0]
-                        prediccion_valor += valor * coeficientes[i]
-                    else:
-                        raise ValueError(f"Feature faltante en datos: {nombre_feature}")
+            intercepto = self.metadata.get('intercepto', self.modelo.get('intercepto', 0.0))
+            prediccion_valor = intercepto
+            coeficientes_metadata = self.metadata.get('coeficientes', [])
 
-                prediccion = prediccion_valor
+            for item in coeficientes_metadata:
+                nombre_feature = item['Feature']
+                coeficiente = item['Coeficiente']
 
-            except KeyError as e:
-                raise ValueError(
-                    f"El archivo del modelo (diccionario) no tiene la estructura esperada: falta la clave {e}")
+                if nombre_feature in features_df.columns:
+                    valor_input = features_df[nombre_feature].values[0]
+                    prediccion_valor += valor_input * coeficiente
+
+            prediccion = prediccion_valor
+
         else:
             prediccion = self.modelo.predict(features_df)[0]
 
