@@ -1,16 +1,17 @@
 {
   "modelo_tipo": "Lasso",
   "parametros": {
-    "alpha": 5.0
+    "elasticNetParam": 1.0,
+    "regParam": 0.1
   },
-  "fecha_entrenamiento": "20251115_005312",
+  "fecha_entrenamiento": "20251122_234603",
   "metricas_train": {
-    "MAE": 145.15431728081316,
-    "R2": 0.8989004798285454
+    "MAE": 162.38340631634946,
+    "R2": 0.8657431303135567
   },
   "metricas_test": {
-    "MAE": 168.7982504249451,
-    "R2": 0.8297075155797605
+    "MAE": 171.97828667920274,
+    "R2": 0.8322451678276443
   },
   "features": [
     "anio_centrado",
@@ -23,32 +24,28 @@
     "material_MaterialSensorial"
   ],
   "num_features": 8,
-  "features_activas": 6,
-  "intercepto": 1067.1299319783288,
+  "features_activas": 5,
+  "intercepto": 167.07819102737577,
   "coeficientes": [
     {
-      "Feature": "tipo_Psicologica",
-      "Coeficiente": -385.5137471106957
-    },
-    {
-      "Feature": "material_MaterialSensorial",
-      "Coeficiente": -255.38612006623492
+      "Feature": "es_temporada_alta",
+      "Coeficiente": -183.0221423100392
     },
     {
       "Feature": "es_temporada_baja",
-      "Coeficiente": -167.77362522467268
-    },
-    {
-      "Feature": "es_temporada_alta",
-      "Coeficiente": -161.32643843256756
+      "Coeficiente": -175.89917656458033
     },
     {
       "Feature": "anio_centrado",
-      "Coeficiente": 62.91647442514309
+      "Coeficiente": 105.1290994032766
+    },
+    {
+      "Feature": "es_inicio_ciclo",
+      "Coeficiente": 3.3442550056878546
     },
     {
       "Feature": "demanda_lag_1m",
-      "Coeficiente": 0.6550132365097877
+      "Coeficiente": 0.9306626933083285
     }
   ],
   "segmentos": [
